@@ -1,0 +1,33 @@
+{
+  "name": "hanwenbo/reflect",
+  "description": "ezswoole",
+  "type": "library",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "韩文博",
+      "email": "9476400@qq.com"
+    }
+  ],
+  "keywords": [
+    "fashop",
+    "easyswoole",
+    "swoole",
+    "php"
+  ],
+  "require": {
+    "php": ">=7.2",
+    "easyswoole/spl": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "hanwenbo\\reflect\\": "src/"
+    }
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.laravel-china.org"
+    }
+  }
+}
