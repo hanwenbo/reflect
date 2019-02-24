@@ -43,7 +43,7 @@ class ReflectItemResponse
 	 */
 	public function getTitle()
 	{
-		return $this->parseTitle( $this->obj->getDocComment() );
+		return $this->parseTitle( $this->obj->getDocComment()??'' );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class ReflectItemResponse
 	private function parseTitle( string $comment ) : string
 	{
 		preg_match_all( "/\*\*\s*(?:\*\s*)+([^\s\*]+)/", $comment, $title_matches, PREG_PATTERN_ORDER );
-		return $title_matches[1][0];
+		return $title_matches[1][0] ?? '';
 	}
 
 }
