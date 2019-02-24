@@ -35,7 +35,7 @@ class ReflectItemResponse
 	 */
 	public function getName()
 	{
-		return $this->obj->getName();
+		return $this->obj->getShortName();
 	}
 
 	/**
