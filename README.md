@@ -16,6 +16,16 @@ $list = $test->getFunctionListReflect();
 foreach( $list as $row ){
 	var_dump( $row->getName() );
 	var_dump( $row->getTitle() );
+    var_dump( $row->getParam('method') );
+
 }
 
+
 ```
+
+| 方法          |      |
+| ------------- | ---- |
+| getName       |      |
+| getTitle      |      |
+| getParam      |      |
+| getDocComment |      |
