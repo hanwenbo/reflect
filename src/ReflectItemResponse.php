@@ -97,5 +97,4 @@ class ReflectItemResponse
 			return [];
 		}
 	}
-
 }
