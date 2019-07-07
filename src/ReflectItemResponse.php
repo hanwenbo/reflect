@@ -74,18 +74,26 @@ class ReflectItemResponse
 	 */
 	public function getParam( string $name ) : array
 	{
-		$comment =  $this->getDocComment();
-		if(strstr($comment,"* @{$name} ")){
-			$paramRows =  explode("\n",$comment);
-			foreach($paramRows as $paramRow) {
-				$_units =  explode(" ",$paramRow);
-				if(strstr($paramRow,"* @{$name} ")){
-					// 去掉 *
-					unset($_units[0],$_units[1],$_units[2]);
-					return array_values($_units);
+		$comment = $this->getDocComment();
+		if( strstr( $comment, "* @{$name} " ) ){
+			$paramRows = explode( "\n", $comment );
+			foreach( $paramRows as $paramRow ){
+				if(strstr( $paramRow, "* @{$name} " ) ){
+					$_units       = explode( " ", trim( $paramRow ) );
+					$_unitsResult = [];
+					$_startIndex  = 0;
+					foreach( $_units as $index => $unit ){
+						if( $unit === "@{$name}" ){
+							$_startIndex = $index;
+						}
+						if( $index > $_startIndex && $unit !== "" ){
+							$_unitsResult[] = $unit;
+						}
+					}
 				}
 			}
-		}else{
+			return $_unitsResult;
+		} else{
 			return [];
 		}
 	}
