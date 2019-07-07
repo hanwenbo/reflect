@@ -25,7 +25,7 @@ class ReflectItemResponse
 	 * ReflectItemResponse constructor.
 	 * @param \ReflectionClass | \ReflectionMethod $obj
 	 */
-	public function __construct(  $obj )
+	public function __construct( $obj )
 	{
 		$this->obj = $obj;
 	}
@@ -43,7 +43,7 @@ class ReflectItemResponse
 	 */
 	public function getTitle()
 	{
-		return $this->parseTitle( $this->obj->getDocComment()??'' );
+		return $this->parseTitle( $this->getDocComment() );
 	}
 
 	/**
@@ -55,6 +55,39 @@ class ReflectItemResponse
 	{
 		preg_match_all( "/\*\*\s*(?:\*\s*)+([^\s\*]+)/", $comment, $title_matches, PREG_PATTERN_ORDER );
 		return $title_matches[1][0] ?? '';
+	}
+
+	/**
+	 * 获得注释
+	 * @return string
+	 */
+	public function getDocComment() : string
+	{
+		return $this->obj->getDocComment() ? $this->obj->getDocComment() : '';
+	}
+
+	/**
+	 * 解析@xx
+	 *
+	 * @param string $comment
+	 * @return string
+	 */
+	public function getParam( string $name ) : array
+	{
+		$comment =  $this->getDocComment();
+		if(strstr($comment,"* @{$name} ")){
+			$paramRows =  explode("\n",$comment);
+			foreach($paramRows as $paramRow) {
+				$_units =  explode(" ",$paramRow);
+				if(strstr($paramRow,"* @{$name} ")){
+					// 去掉 *
+					unset($_units[0],$_units[1],$_units[2]);
+					return array_values($_units);
+				}
+			}
+		}else{
+			return [];
+		}
 	}
 
 }

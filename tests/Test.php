@@ -33,4 +33,12 @@ class Test
 	public function del(){
 
 	}
+
+	/**
+	 * 获得参数
+	 * @method GET
+	 */
+	public function getParam(){
+
+	}
 }

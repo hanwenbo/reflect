@@ -35,6 +35,13 @@ class Test extends TestParents
 	{
 
 	}
+	/**
+	 * 获得参数
+	 * @method GET
+	 */
+	public function getParam(){
+
+	}
 }
 
 class TestParents{
@@ -42,17 +49,18 @@ class TestParents{
 
 	}
 }
-require_once '../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 $test = new \hanwenbo\reflect\Reflect( new Test );
 
 //var_dump( $test->getClassReflect()->getName() );
 
 $list = $test->getFunctionListReflect();
-//
-//foreach( $list as $row ){
+
+foreach( $list as $row ){
 //	var_dump( $row->getName() );
 //	var_dump( $row->getTitle() );
-//}
+	var_dump( $row->getParam('method') );
+}
 
 
 //var_dump(get_class_methods('Test'));
