@@ -31,7 +31,7 @@ class ReflectItemResponse
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function getName()
 	{
@@ -47,6 +47,17 @@ class ReflectItemResponse
 	}
 
 	/**
+	 * 解析@xx
+	 *
+	 * @param string $comment
+	 * @return string
+	 */
+	public function getParam( string $name ) : array
+	{
+		return $this->parseParam( $name, $this->getDocComment() );
+	}
+
+	/**
 	 * 解析标题
 	 * @param string $comment
 	 * @return string
@@ -54,7 +65,38 @@ class ReflectItemResponse
 	private function parseTitle( string $comment ) : string
 	{
 		preg_match_all( "/\*\*\s*(?:\*\s*)+([^\s\*]+)/", $comment, $title_matches, PREG_PATTERN_ORDER );
-		return $title_matches[1][0] ?? '';
+		return isset($title_matches[1][0]) ? $title_matches[1][0] : '';
+	}
+
+	/**
+	 * 解析某个参数
+	 * @param string $name
+	 * @param string $comment
+	 * @return array
+	 */
+	private function parseParam( string $name, string $comment )
+	{
+		if( strstr( $comment, "* @{$name}" ) ){
+			$paramRows = explode( "\n", $comment );
+			foreach( $paramRows as $paramRow ){
+				if( strstr( $paramRow, "* @{$name}" ) ){
+					$_units       = explode( " ", trim( $paramRow ) );
+					$_unitsResult = [];
+					$_startIndex  = 0;
+					foreach( $_units as $index => $unit ){
+						if( $unit === "@{$name}" ){
+							$_startIndex = $index;
+						}
+						if( $index >= $_startIndex && $index !== 0  && $unit !== "" ){
+							$_unitsResult[] = $unit;
+						}
+					}
+				}
+			}
+			return $_unitsResult;
+		} else{
+			return [];
+		}
 	}
 
 	/**
@@ -66,35 +108,4 @@ class ReflectItemResponse
 		return $this->obj->getDocComment() ? $this->obj->getDocComment() : '';
 	}
 
-	/**
-	 * 解析@xx
-	 *
-	 * @param string $comment
-	 * @return string
-	 */
-	public function getParam( string $name ) : array
-	{
-		$comment = $this->getDocComment();
-		if( strstr( $comment, "* @{$name} " ) ){
-			$paramRows = explode( "\n", $comment );
-			foreach( $paramRows as $paramRow ){
-				if(strstr( $paramRow, "* @{$name} " ) ){
-					$_units       = explode( " ", trim( $paramRow ) );
-					$_unitsResult = [];
-					$_startIndex  = 0;
-					foreach( $_units as $index => $unit ){
-						if( $unit === "@{$name}" ){
-							$_startIndex = $index;
-						}
-						if( $index > $_startIndex && $unit !== "" ){
-							$_unitsResult[] = $unit;
-						}
-					}
-				}
-			}
-			return $_unitsResult;
-		} else{
-			return [];
-		}
-	}
 }
