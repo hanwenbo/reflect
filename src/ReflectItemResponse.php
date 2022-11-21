@@ -56,6 +56,16 @@ class ReflectItemResponse
 	{
 		return $this->parseParam( $name, $this->getDocComment() );
 	}
+	/**
+	 * 解析@xx
+	 *
+	 * @param string $comment
+	 * @return array
+	 */
+	public function getParams( string $name ) : array
+	{
+		return $this->parseParams( $name, $this->getDocComment() );
+	}
 
 	/**
 	 * 解析标题
@@ -65,7 +75,7 @@ class ReflectItemResponse
 	private function parseTitle( string $comment ) : string
 	{
 		preg_match_all( "/\*\*\s*(?:\*\s*)+([^\s\*]+)/", $comment, $title_matches, PREG_PATTERN_ORDER );
-		return isset($title_matches[1][0]) ? $title_matches[1][0] : '';
+		return $title_matches[1][0] ?? '';
 	}
 
 	/**
@@ -76,10 +86,10 @@ class ReflectItemResponse
 	 */
 	private function parseParam( string $name, string $comment )
 	{
-		if( strstr( $comment, "* @{$name}" ) ){
+		if( strpos( $comment, "* @{$name}" ) !== false ){
 			$paramRows = explode( "\n", $comment );
 			foreach( $paramRows as $paramRow ){
-				if( strstr( $paramRow, "* @{$name}" ) ){
+				if( strpos( $paramRow, "* @{$name}" ) !== false ){
 					$_units       = explode( " ", trim( $paramRow ) );
 					$_unitsResult = [];
 					$_startIndex  = 0;
@@ -94,10 +104,41 @@ class ReflectItemResponse
 				}
 			}
 			return $_unitsResult;
-		} else{
-			return [];
 		}
+
+		return [];
 	}
+	/**
+	 * 解析某个参数
+	 * @param string $name
+	 * @param string $comment
+	 * @return array
+	 */
+	private function parseParams( string $name, string $comment )
+	{
+		if( strpos( $comment, "* @{$name}" ) !== false ){
+			$paramRows = explode( "\n", $comment );
+			$_unitsResult = [];
+			foreach( $paramRows as $key=> $paramRow ){
+				if( strpos( $paramRow, "* @{$name}" ) !== false ){
+					$_units       = explode( " ", trim( $paramRow ) );
+					$_startIndex  = 0;
+					foreach( $_units as $index => $unit ){
+						if( $unit === "@{$name}" ){
+							$_startIndex = $index;
+						}
+						if( $index >= $_startIndex && $index !== 0  && $unit !== "" ){
+							$_unitsResult[$key][] = $unit;
+						}
+					}
+				}
+			}
+			return $_unitsResult;
+		}
+
+		return [];
+	}
+
 
 	/**
 	 * 获得注释
@@ -105,7 +146,7 @@ class ReflectItemResponse
 	 */
 	public function getDocComment() : string
 	{
-		return $this->obj->getDocComment() ? $this->obj->getDocComment() : '';
+		return $this->obj->getDocComment() ?: '';
 	}
 
 }
